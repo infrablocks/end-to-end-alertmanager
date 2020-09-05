@@ -1,0 +1,13 @@
+---
+:backends:
+  - "overrides"
+  - "env"
+  - "yaml"
+:logger: "noop"
+:yaml:
+  :datadir: "config"
+:hierarchy:
+  - "roles/%{role}"
+  - "secrets/database/example"
+  - "secrets/grafana/example"
+  - "defaults"
