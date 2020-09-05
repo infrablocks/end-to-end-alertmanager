@@ -1,5 +1,3 @@
-
-
 data "template_file" "alertmanager_task_container_definitions" {
   template = file("${path.root}/container-definitions/alertmanager.json.tpl")
 
@@ -11,7 +9,7 @@ data "template_file" "alertmanager_task_container_definitions" {
   }
 }
 
-module "prometheus_service" {
+module "alertmanager_service" {
   source  = "infrablocks/ecs-service/aws"
   version = "3.0.0-rc.4"
 
