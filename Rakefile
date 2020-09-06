@@ -121,6 +121,25 @@ namespace :load_balancer do
   end
 end
 
+namespace :service_registry do
+  RakeTerraform.define_command_tasks(
+      configuration_name: 'service registry',
+      argument_names: [:deployment_identifier, :domain_name]
+  ) do |t, args|
+    configuration = configuration
+        .for_overrides(domain_name: args.domain_name)
+        .for_scope(
+            {deployment_identifier: args.deployment_identifier}
+                .merge(role: 'service_registry'))
+
+    t.source_directory = 'infra/service_registry'
+    t.work_directory = 'build'
+
+    t.backend_config = configuration.backend_config
+    t.vars = configuration.vars
+  end
+end
+
 namespace :service do
   RakeTerraform.define_command_tasks(
       configuration_name: 'service',
@@ -148,9 +167,11 @@ namespace :deployment do
     Rake::Task['network:provision'].invoke(*args)
     Rake::Task['cluster:provision'].invoke(*args)
     Rake::Task['load_balancer:provision'].invoke(*args)
+    Rake::Task['service_registry:provision'].invoke(*args)
   end
 
   task :destroy, [:deployment_identifier, :domain_name] do |_, args|
+    Rake::Task['service_registry:destroy'].invoke(*args)
     Rake::Task['load_balancer:destroy'].invoke(*args)
     Rake::Task['cluster:destroy'].invoke(*args)
     Rake::Task['network:destroy'].invoke(*args)
