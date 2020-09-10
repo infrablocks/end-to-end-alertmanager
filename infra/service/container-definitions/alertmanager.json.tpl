@@ -13,7 +13,13 @@
       },
       {
         "containerPort": ${container_cluster_port},
-        "hostPort": ${host_cluster_port}
+        "hostPort": ${host_cluster_port},
+        "protocol": "tcp"
+      },
+      {
+        "containerPort": ${container_cluster_port},
+        "hostPort": ${host_cluster_port},
+        "protocol": "udp"
       }
     ],
     "environment": [

@@ -1,6 +1,20 @@
 locals {
-  env_file_object_key = "alertmanager/service/environments/default.env"
+  env_file_object_key = "alertmanager/service/environments/${var.instance}.env"
   configuration_file_object_path = "alertmanager/service/configuration/alertmanager.yml"
+}
+
+data "template_file" "alertmanager_peer" {
+  for_each = setsubtract(range(1, var.cluster_size + 1), [tostring(var.instance)])
+
+  template = "$${name}-$${instance}.$${namespace}.$${domain_name}:$${port}"
+
+  vars = {
+    name = var.service_name
+    instance = each.value
+    namespace = var.service_registry_namespace
+    domain_name = var.domain_name
+    port = var.alertmanager_service_host_cluster_port
+  }
 }
 
 data "template_file" "alertmanager_dns_name" {
@@ -36,6 +50,9 @@ data "template_file" "env" {
 
   vars = {
     alertmanager_dns_name = data.template_file.alertmanager_dns_name.rendered
+    alertmanager_web_port = var.alertmanager_service_container_web_port
+    alertmanager_cluster_port = var.alertmanager_service_container_cluster_port
+    alertmanager_cluster_peers = join(",", values(data.template_file.alertmanager_peer).*.rendered)
     alertmanager_configuration_file_object_path = data.template_file.configuration_file_object_path.rendered
   }
 }

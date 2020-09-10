@@ -143,10 +143,12 @@ end
 namespace :service do
   RakeTerraform.define_command_tasks(
       configuration_name: 'service',
-      argument_names: [:deployment_identifier, :domain_name]
+      argument_names: [:deployment_identifier, :domain_name, :instance]
   ) do |t, args|
     configuration = configuration
-        .for_overrides(domain_name: args.domain_name)
+        .for_overrides(
+            domain_name: args.domain_name,
+            instance: args.instance)
         .for_scope(
             {deployment_identifier: args.deployment_identifier}
                 .merge(role: 'service'))
@@ -168,15 +170,27 @@ namespace :deployment do
     Rake::Task['cluster:provision'].invoke(*args)
     Rake::Task['load_balancer:provision'].invoke(*args)
     Rake::Task['service_registry:provision'].invoke(*args)
+    Rake::Task['service:provision'].invoke(*(args.to_a.append("1")))
+    Rake::Task['service:provision'].reenable
+    Rake::Task['service:provision'].invoke(*(args.to_a.append("2")))
+    Rake::Task['service:provision'].reenable
+    Rake::Task['service:provision'].invoke(*(args.to_a.append("3")))
+    Rake::Task['service:provision'].reenable
   end
 
   task :destroy, [:deployment_identifier, :domain_name] do |_, args|
+    Rake::Task['service:destroy'].invoke(*(args.to_a.append("3")))
+    Rake::Task['service:destroy'].reenable
+    Rake::Task['service:destroy'].invoke(*(args.to_a.append("2")))
+    Rake::Task['service:destroy'].reenable
+    Rake::Task['service:destroy'].invoke(*(args.to_a.append("1")))
+    Rake::Task['service:destroy'].reenable
     Rake::Task['service_registry:destroy'].invoke(*args)
     Rake::Task['load_balancer:destroy'].invoke(*args)
     Rake::Task['cluster:destroy'].invoke(*args)
     Rake::Task['network:destroy'].invoke(*args)
-    Rake::Task['certificate:destroy'].invoke(*args)
-    Rake::Task['domain:destroy'].invoke(*args)
-    Rake::Task['bootstrap:destroy'].invoke(*args)
+    # Rake::Task['certificate:destroy'].invoke(*args)
+    # Rake::Task['domain:destroy'].invoke(*args)
+    # Rake::Task['bootstrap:destroy'].invoke(*args)
   end
 end

@@ -1,4 +1,6 @@
-ALERTMANAGER_WEB_LISTEN_ADDRESS=":${alertmanager_web_port}"
-ALERTMANAGER_WEB_EXTERNAL_URL="https://alertmanager.example.com"
+ALERTMANAGER_WEB_LISTEN_ADDRESS="0.0.0.0:${alertmanager_web_port}"
+ALERTMANAGER_WEB_EXTERNAL_URL="https://${alertmanager_dns_name}"
 ALERTMANAGER_CLUSTER_LISTEN_ADDRESS="0.0.0.0:${alertmanager_cluster_port}"
+ALERTMANAGER_CLUSTER_PEERS="${alertmanager_cluster_peers}"
 ALERTMANAGER_CONFIGURATION_FILE_OBJECT_PATH="${alertmanager_configuration_file_object_path}"
+ALERTMANAGER_LOG_LEVEL="debug"

@@ -3,15 +3,17 @@ data "template_file" "alertmanager_task_container_definitions" {
 
   vars = {
     env_file_object_path = data.template_file.env_file_object_path.rendered
-    container_port = var.alertmanager_service_container_port
-    host_port = var.alertmanager_service_host_port
+    container_web_port = var.alertmanager_service_container_web_port
+    host_web_port = var.alertmanager_service_host_web_port
+    container_cluster_port = var.alertmanager_service_container_cluster_port
+    host_cluster_port = var.alertmanager_service_host_cluster_port
     storage_location = var.alertmanager_storage_location
   }
 }
 
 module "alertmanager_service" {
   source  = "infrablocks/ecs-service/aws"
-  version = "3.0.0-rc.4"
+  version = "3.2.0"
 
   component = var.component
   deployment_identifier = var.deployment_identifier
@@ -22,17 +24,19 @@ module "alertmanager_service" {
 
   service_task_container_definitions = data.template_file.alertmanager_task_container_definitions.rendered
 
-  service_name = var.component
+  service_name = "${var.service_name}-${var.instance}"
   service_image = var.alertmanager_image
-  service_port = var.alertmanager_service_container_port
+  service_port = var.alertmanager_service_container_web_port
 
   service_desired_count = var.service_desired_count
-  service_deployment_maximum_percent = 200
-  service_deployment_minimum_healthy_percent = 50
+  service_deployment_maximum_percent = 100
+  service_deployment_minimum_healthy_percent = 0
 
-  service_network_mode = 'awsvpc'
+  service_task_network_mode = "awsvpc"
 
-  service_elb_name = ""
+  target_group_arn = data.terraform_remote_state.load_balancer.outputs.target_group_arn
+
+  service_discovery_namespace_id = data.terraform_remote_state.service_registry.outputs.service_discovery_namespace_id
 
   service_volumes = [
     {
@@ -43,4 +47,6 @@ module "alertmanager_service" {
 
   ecs_cluster_id = data.terraform_remote_state.cluster.outputs.ecs_cluster_id
   ecs_cluster_service_role_arn = data.terraform_remote_state.cluster.outputs.ecs_service_role_arn
+
+  register_in_service_discovery = "yes"
 }

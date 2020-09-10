@@ -6,21 +6,22 @@ vars:
 
   domain_name: "%{hiera('domain_name')}"
 
-  service_desired_count: 3
+  instance: "%{hiera('instance')}"
+  cluster_size: 3
+
+  service_name: "%{hiera('component')}"
+  service_registry_namespace: "%{hiera('component')}-%{deployment_identifier}-sd"
+  service_desired_count: 1
 
   secrets_bucket_name: "%{hiera('secrets_bucket_name')}"
 
-  database_name: "%{hiera('database_name')}"
-  database_user: "%{hiera('database_user')}"
-  database_password: "%{hiera('database_password')}"
-
-  grafana_image: "infrablocks/grafana-aws:0.1.0"
-  grafana_service_container_port: "3001"
-  grafana_service_host_port: "3001"
-  grafana_service_lb_port: "3001"
-  grafana_admin_user: "%{hiera('grafana_admin_user')}"
-  grafana_admin_password: "%{hiera('grafana_admin_password')}"
-  grafana_allow_cidrs:
+  alertmanager_image: "infrablocks/alertmanager-aws:0.1.0"
+  alertmanager_service_container_web_port: "9093"
+  alertmanager_service_host_web_port: "9093"
+  alertmanager_service_container_cluster_port: "9094"
+  alertmanager_service_host_cluster_port: "9094"
+  alertmanager_storage_location: "/var/opt/alertmanager"
+  alertmanager_allow_cidrs:
     - "0.0.0.0/0"
 
   domain_state_bucket_region: "%{hiera('domain_state_bucket_region')}"
@@ -33,10 +34,15 @@ vars:
   network_state_bucket_is_encrypted: "%{hiera('network_state_bucket_is_encrypted')}"
   network_state_key: "%{hiera('network_state_key')}"
 
-  database_state_bucket_region: "%{hiera('database_state_bucket_region')}"
-  database_state_bucket_name: "%{hiera('database_state_bucket_name')}"
-  database_state_bucket_is_encrypted: "%{hiera('database_state_bucket_is_encrypted')}"
-  database_state_key: "%{hiera('database_state_key')}"
+  load_balancer_state_bucket_region: "%{hiera('load_balancer_state_bucket_region')}"
+  load_balancer_state_bucket_name: "%{hiera('load_balancer_state_bucket_name')}"
+  load_balancer_state_bucket_is_encrypted: "%{hiera('load_balancer_state_bucket_is_encrypted')}"
+  load_balancer_state_key: "%{hiera('load_balancer_state_key')}"
+
+  service_registry_state_bucket_region: "%{hiera('service_registry_state_bucket_region')}"
+  service_registry_state_bucket_name: "%{hiera('service_registry_state_bucket_name')}"
+  service_registry_state_bucket_is_encrypted: "%{hiera('service_registry_state_bucket_is_encrypted')}"
+  service_registry_state_key: "%{hiera('service_registry_state_key')}"
 
   cluster_state_bucket_region: "%{hiera('cluster_state_bucket_region')}"
   cluster_state_bucket_name: "%{hiera('cluster_state_bucket_name')}"

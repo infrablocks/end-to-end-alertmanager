@@ -4,8 +4,8 @@ variable "deployment_identifier" {}
 
 variable "domain_name" {}
 
-variable "alertmanager_service_container_port" {}
-variable "alertmanager_service_host_port" {}
+variable "alertmanager_service_container_web_port" {}
+variable "alertmanager_service_host_web_port" {}
 variable "alertmanager_allow_cidrs" {
   type = list(string)
 }

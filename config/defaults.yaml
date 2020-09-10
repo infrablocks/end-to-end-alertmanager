@@ -40,7 +40,7 @@ service_registry_state_key: "service-registry/deployments/%{deployment_identifie
 service_state_bucket_region: "%{hiera('region')}"
 service_state_bucket_name: "%{hiera('storage_bucket_name')}"
 service_state_bucket_is_encrypted: "true"
-service_state_key: "service/deployments/%{deployment_identifier}.tfstate"
+service_state_key: "service/deployments/%{hiera('instance')}.tfstate"
 
 configuration_state_bucket_region: "%{hiera('region')}"
 configuration_state_bucket_name: "%{hiera('storage_bucket_name')}"

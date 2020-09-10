@@ -6,8 +6,8 @@ vars:
 
   domain_name: "%{hiera('domain_name')}"
 
-  alertmanager_service_container_port: "9093"
-  alertmanager_service_host_port: "9093"
+  alertmanager_service_container_web_port: "9093"
+  alertmanager_service_host_web_port: "9093"
   alertmanager_allow_cidrs:
     - "0.0.0.0/0"
 
