@@ -7,9 +7,9 @@ output "arn" {
 }
 
 output "target_group_arn" {
-  value = module.load_balancer.target_group_arn
+  value = module.load_balancer.target_groups["default"].arn
 }
 
 output "listener_arn" {
-  value = module.load_balancer.listener_arn
+  value = module.load_balancer.listeners["default"].arn
 }

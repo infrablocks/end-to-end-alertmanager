@@ -2,6 +2,8 @@ variable "region" {}
 variable "component" {}
 variable "deployment_identifier" {}
 
+variable "private_network_cidr" {}
+
 variable "domain_name" {}
 
 variable "alertmanager_service_container_web_port" {}

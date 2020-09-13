@@ -4,7 +4,7 @@ data "aws_acm_certificate" "wildcard" {
 
 module "load_balancer" {
   source = "infrablocks/application-load-balancer/aws"
-  version = "1.2.0-rc.1"
+  version = "2.1.0"
 
   component = var.component
   deployment_identifier = var.deployment_identifier
@@ -13,15 +13,62 @@ module "load_balancer" {
   vpc_id = data.terraform_remote_state.network.outputs.vpc_id
   subnet_ids = data.terraform_remote_state.network.outputs.public_subnet_ids
 
-  target_group_type = "ip"
-  target_group_port = var.alertmanager_service_host_web_port
-
-  listener_certificate_arn = data.aws_acm_certificate.wildcard.arn
-
-  domain_name = data.terraform_remote_state.domain.outputs.domain_name
-  public_zone_id = data.terraform_remote_state.domain.outputs.public_zone_id
-  private_zone_id = data.terraform_remote_state.domain.outputs.private_zone_id
-
   expose_to_public_internet = "yes"
-  include_public_dns_record = "yes"
+
+  security_groups = {
+    default = {
+      associate = "yes"
+      ingress_rule = {
+        include = "yes"
+        cidrs = ["0.0.0.0/0"]
+      },
+      egress_rule = {
+        include = "yes"
+        from_port = 0
+        to_port = 65535
+        cidrs = [var.private_network_cidr]
+      }
+    }
+  }
+
+  dns = {
+    domain_name = data.terraform_remote_state.domain.outputs.domain_name
+    records = [
+      {
+        zone_id = data.terraform_remote_state.domain.outputs.public_zone_id
+      },
+      {
+        zone_id = data.terraform_remote_state.domain.outputs.private_zone_id
+      }
+    ]
+  }
+
+  target_groups = [
+    {
+      key = "default"
+      port = var.alertmanager_service_host_web_port
+      protocol = "HTTP"
+      target_type = "ip"
+      health_check = {
+        port = "traffic-port"
+        protocol = "HTTP"
+        interval = 30
+        healthy_threshold = 3
+        unhealthy_threshold = 3
+      }
+    }
+  ]
+
+  listeners = [
+    {
+      key = "default"
+      port = "443"
+      protocol = "HTTPS"
+      certificate_arn = data.aws_acm_certificate.wildcard.arn,
+      default_action = {
+        type = "forward"
+        target_group_key = "default"
+      }
+    }
+  ]
 }

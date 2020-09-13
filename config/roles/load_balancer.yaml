@@ -4,6 +4,8 @@ vars:
   component: "%{hiera('component')}"
   deployment_identifier: "%{deployment_identifier}"
 
+  private_network_cidr: "%{hiera('private_network_cidr')}"
+
   domain_name: "%{hiera('domain_name')}"
 
   alertmanager_service_container_web_port: "9093"
