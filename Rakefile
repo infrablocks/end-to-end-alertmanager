@@ -6,7 +6,7 @@ configuration = Confidante.configuration
 
 RakeTerraform.define_installation_tasks(
     path: File.join(Dir.pwd, 'vendor', 'terraform'),
-    version: '0.12.28')
+    version: '1.1.7')
 
 namespace :bootstrap do
   RakeTerraform.define_command_tasks(
