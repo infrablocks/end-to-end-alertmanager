@@ -1,14 +1,12 @@
-data "template_file" "alertmanager_task_container_definitions" {
-  template = file("${path.root}/container-definitions/alertmanager.json.tpl")
-
-  vars = {
-    env_file_object_path = data.template_file.env_file_object_path.rendered
+locals {
+  alertmanager_task_container_definitions = templatefile("${path.root}/container-definitions/alertmanager.json.tpl", {
+    env_file_object_path = local.env_file_object_path
     container_web_port = var.alertmanager_service_container_web_port
     host_web_port = var.alertmanager_service_host_web_port
     container_cluster_port = var.alertmanager_service_container_cluster_port
     host_cluster_port = var.alertmanager_service_host_cluster_port
     storage_location = var.alertmanager_storage_location
-  }
+  })
 }
 
 module "alertmanager_service" {
@@ -22,7 +20,7 @@ module "alertmanager_service" {
   vpc_id = data.aws_vpc.vpc.id
   subnet_ids = data.terraform_remote_state.network.outputs.private_subnet_ids
 
-  service_task_container_definitions = data.template_file.alertmanager_task_container_definitions.rendered
+  service_task_container_definitions = local.alertmanager_task_container_definitions
 
   service_name = "${var.service_name}-${var.instance}"
   service_image = var.alertmanager_image

@@ -9,7 +9,7 @@ configuration = Confidante.configuration
 
 RakeTerraform.define_installation_tasks(
   path: File.join(Dir.pwd, 'vendor', 'terraform'),
-  version: '1.1.7'
+  version: '1.3.7'
 )
 
 RuboCop::RakeTask.new
@@ -29,8 +29,9 @@ namespace :bootstrap do
     configuration_name: 'bootstrap',
     argument_names: [:deployment_identifier]
   ) do |t, args|
-    configuration = configuration
-                    .for_scope(args.to_h.merge(role: 'bootstrap'))
+    configuration =
+      configuration
+      .for_scope(args.to_h.merge(role: 'bootstrap'))
 
     t.source_directory = 'infra/bootstrap'
     t.work_directory = 'build'
@@ -49,12 +50,13 @@ namespace :domain do
     configuration_name: 'domain',
     argument_names: %i[deployment_identifier domain_name]
   ) do |t, args|
-    configuration = configuration
-                    .for_overrides(domain_name: args.domain_name)
-                    .for_scope(
-                      { deployment_identifier: args.deployment_identifier }
-                          .merge(role: 'domain')
-                    )
+    configuration =
+      configuration
+      .for_overrides(domain_name: args.domain_name)
+      .for_scope(
+        { deployment_identifier: args.deployment_identifier }
+            .merge(role: 'domain')
+      )
 
     t.source_directory = 'infra/domain'
     t.work_directory = 'build'
@@ -69,12 +71,13 @@ namespace :certificate do
     configuration_name: 'certificate',
     argument_names: %i[deployment_identifier domain_name]
   ) do |t, args|
-    configuration = configuration
-                    .for_overrides(domain_name: args.domain_name)
-                    .for_scope(
-                      { deployment_identifier: args.deployment_identifier }
-                          .merge(role: 'certificate')
-                    )
+    configuration =
+      configuration
+      .for_overrides(domain_name: args.domain_name)
+      .for_scope(
+        { deployment_identifier: args.deployment_identifier }
+            .merge(role: 'certificate')
+      )
 
     t.source_directory = 'infra/certificate'
     t.work_directory = 'build'
@@ -89,8 +92,9 @@ namespace :network do
     configuration_name: 'network',
     argument_names: [:deployment_identifier]
   ) do |t, args|
-    configuration = configuration
-                    .for_scope(args.to_h.merge(role: 'network'))
+    configuration =
+      configuration
+      .for_scope(args.to_h.merge(role: 'network'))
 
     t.source_directory = 'infra/network'
     t.work_directory = 'build'
@@ -105,8 +109,9 @@ namespace :cluster do
     configuration_name: 'cluster',
     argument_names: [:deployment_identifier]
   ) do |t, args|
-    configuration = configuration
-                    .for_scope(args.to_h.merge(role: 'cluster'))
+    configuration =
+      configuration
+      .for_scope(args.to_h.merge(role: 'cluster'))
 
     t.source_directory = 'infra/cluster'
     t.work_directory = 'build'
@@ -127,12 +132,13 @@ namespace :load_balancer do
     configuration_name: 'load balancer',
     argument_names: %i[deployment_identifier domain_name]
   ) do |t, args|
-    configuration = configuration
-                    .for_overrides(domain_name: args.domain_name)
-                    .for_scope(
-                      { deployment_identifier: args.deployment_identifier }
-                          .merge(role: 'load_balancer')
-                    )
+    configuration =
+      configuration
+      .for_overrides(domain_name: args.domain_name)
+      .for_scope(
+        { deployment_identifier: args.deployment_identifier }
+            .merge(role: 'load_balancer')
+      )
 
     t.source_directory = 'infra/load_balancer'
     t.work_directory = 'build'
@@ -147,12 +153,13 @@ namespace :service_registry do
     configuration_name: 'service registry',
     argument_names: %i[deployment_identifier domain_name]
   ) do |t, args|
-    configuration = configuration
-                    .for_overrides(domain_name: args.domain_name)
-                    .for_scope(
-                      { deployment_identifier: args.deployment_identifier }
-                          .merge(role: 'service_registry')
-                    )
+    configuration =
+      configuration
+      .for_overrides(domain_name: args.domain_name)
+      .for_scope(
+        { deployment_identifier: args.deployment_identifier }
+            .merge(role: 'service_registry')
+      )
 
     t.source_directory = 'infra/service_registry'
     t.work_directory = 'build'
@@ -167,15 +174,16 @@ namespace :service do
     configuration_name: 'service',
     argument_names: %i[deployment_identifier domain_name instance]
   ) do |t, args|
-    configuration = configuration
-                    .for_overrides(
-                      domain_name: args.domain_name,
-                      instance: args.instance
-                    )
-                    .for_scope(
-                      { deployment_identifier: args.deployment_identifier }
-                          .merge(role: 'service')
-                    )
+    configuration =
+      configuration
+      .for_overrides(
+        domain_name: args.domain_name,
+        instance: args.instance
+      )
+      .for_scope(
+        { deployment_identifier: args.deployment_identifier }
+            .merge(role: 'service')
+      )
 
     t.source_directory = 'infra/service'
     t.work_directory = 'build'

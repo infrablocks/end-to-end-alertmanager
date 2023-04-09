@@ -4,7 +4,7 @@ data "aws_acm_certificate" "wildcard" {
 
 module "load_balancer" {
   source = "infrablocks/application-load-balancer/aws"
-  version = "2.1.0"
+  version = "4.1.0-rc.2"
 
   component = var.component
   deployment_identifier = var.deployment_identifier
